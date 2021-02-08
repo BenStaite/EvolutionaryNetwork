@@ -1,0 +1,2 @@
+C:\Users\Benst\3d Agents\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Benst\3d Agents\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
