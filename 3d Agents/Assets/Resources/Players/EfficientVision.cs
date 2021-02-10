@@ -11,9 +11,7 @@ public class EfficientVision : MonoBehaviour
     private float Timer;
 
     public float[] Distances;
-    public float[] isBodys;
-    public float[] isHeads;
-    public float[] isWalls;
+    public float[] types;
     public float[] angles;
     public float visionangle = 0.51f;
     
@@ -53,10 +51,9 @@ public class EfficientVision : MonoBehaviour
     {
         Timer = 0;
         Distances = new float[objectMax];
-        isHeads = new float[objectMax];
-        isWalls = new float[objectMax];
+        types = new float[objectMax];
         angles = new float[objectMax];
-        isBodys = new float[objectMax];
+
     }
 
     int getHighestIndex(float[] distances)
@@ -144,9 +141,7 @@ public class EfficientVision : MonoBehaviour
                 distances[i] = -1f;
                 Distances[i] = 0;
                 angles[i] = 0;
-                isBodys[i] = 0;
-                isHeads[i] = 0;
-                isWalls[i] = 0;
+                types[i] = 0;
             }
 
             DetectedObject[] objects = new DetectedObject[colliders.Length];
@@ -202,100 +197,23 @@ public class EfficientVision : MonoBehaviour
                     if (obj.collider.tag == "Head")
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.blue, 0.1f);
-                        isHeads[i] = 1;
+                        types[i] = -1;
                         //  Debug.Log(" ", col);
                     }
                     else if (obj.collider.tag == "Body")
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.blue, 0.1f);
-                        isBodys[i] = 1;
+                        types[i] = 1;
                         // Debug.Log(" ", col);
                     }
                     else
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.green, 0.1f);
-                        isWalls[i] = 1;
+                        types[i] = 0;
                         //Debug.Log(" ", col);
                     }
                 }
             }
-            /*
-            foreach(Collider col in colliders)
-            {
-                //check collider is not from this agent
-                if (!(col.transform.root.GetInstanceID() == transform.root.GetInstanceID()))
-                {
-                    DetectedObject obj = new DetectedObject(col, transform.position);
-                    //calc closest distance between collider and agent
-                   // Debug.Log(Distance.ToString(), col.transform.root.gameObject);
-                    int contains = containsRoot(closest, col);
-                    // if the game object is already in the closest gameobject
-                    if (contains !=-1){
-                        //check if this collider of the same gameobject should replace it if its closer
-                        if (obj.Distance< distances[contains])
-                        {
-                            closest[contains] = col;
-                            distances[contains] = obj.Distance;
-                         //   Debug.DrawLine(transform.position, ClosestPoint, Color.black, 0.1f);
-                        }
-                        else
-                        {
-                           // Debug.DrawLine(transform.position, ClosestPoint, Color.grey, 0.1f);
-                        }
-                    }
-                    else
-                    {
-                        //if the gameobject is new
-                        if (obj.Distance < getHighestValue(distances))
-                        {
-                            int index = getHighestIndex(distances);
-                            distances[index] = obj.Distance;
-                            closest[index] = col;
-                           // Debug.DrawLine(transform.position, ClosestPoint, Color.cyan, 0.1f);
-                        }
-                        else
-                        {
-                          //  Debug.DrawLine(transform.position, ClosestPoint, Color.red, 0.1f);
-                        }
-                    }
-                }
-            }*/
-
-            /*
-            for (int i = 0; i< objectMax; i++)
-            {
-                Collider col = closest[i];
-                if (col != null)
-                {
-                    Vector3 ClosestPoint = col.ClosestPointOnBounds(transform.position);
-                    Distances[i] = 1 -Vector3.Distance(ClosestPoint, transform.position)/visonDistance;
-
-                    Vector3 dirTopoint = (transform.position - ClosestPoint).normalized;
-                    angles[i] = Vector3.SignedAngle(-transform.forward, dirTopoint, Vector3.up)/180f;
-
-
-                    if (col.tag == "Head")
-                    {
-                        Debug.DrawLine(transform.position, ClosestPoint, Color.blue, 0.1f);
-                        isHeads[i] = 1;
-                      //  Debug.Log(" ", col);
-                    }
-                    else if (col.tag == "Body")
-                    {
-                        Debug.DrawLine(transform.position, ClosestPoint, Color.blue, 0.1f);
-                        isBodys[i] = 1;
-                       // Debug.Log(" ", col);
-                    }
-                    else
-                    {
-                        Debug.DrawLine(transform.position, ClosestPoint, Color.green, 0.1f);
-                        isWalls[i] = 1;
-                        //Debug.Log(" ", col);
-                    }
-                }
-            }
-            */
-            
         }
     }
 }

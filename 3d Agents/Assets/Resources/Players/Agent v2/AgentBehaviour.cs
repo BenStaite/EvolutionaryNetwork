@@ -58,9 +58,10 @@ public class AgentBehaviour : MonoBehaviour
         if (!killed)
         {
             //net.AddFitness(-100f);
-            net.AddFitness(distance/10f);
+            //net.AddFitness(distance/10f);
             //net.AddFitness(-50f);
             //net.AddFitness(timeAlive / 10f);
+            net.AddFitness(Kills);
             killed = true;
         }
         
@@ -77,9 +78,17 @@ public class AgentBehaviour : MonoBehaviour
         damage = Mathf.Abs(dotprod) * 10;
         health -= damage;
         recentDamage = damage;
-        if (health <= 0)
+        net.AddFitness(-5);
+        if (Master.KillOnTouch)
         {
             Kill();
+        }
+        else
+        {
+            if (health <= 0)
+            {
+                Kill();
+            }
         }
     }
 
@@ -96,12 +105,19 @@ public class AgentBehaviour : MonoBehaviour
             health -= damage;
             recentDamage = damage;
             attacker.transform.root.GetComponent<AgentBehaviour>().net.damage += damage;
-
-            if (health <= 0)
+            attacker.transform.root.GetComponent<AgentBehaviour>().net.kills++;
+            if (Master.KillOnTouch)
             {
-                attacker.transform.root.GetComponent<AgentBehaviour>().net.kills++;
                 Kill();
             }
+            else
+            {
+                if(health <= 0)
+                {
+                    Kill();
+                }
+            }
+            
         }
         else if (attacker.transform.root.tag == "Player")
         {
@@ -113,9 +129,16 @@ public class AgentBehaviour : MonoBehaviour
             damage = Mathf.Abs(dotprod) * 10;
             health -= damage;
             recentDamage = damage;
-            if (health <= 0)
+            if (Master.KillOnTouch)
             {
                 Kill();
+            }
+            else
+            {
+                if (health <= 0)
+                {
+                    Kill();
+                }
             }
         }
         
@@ -177,20 +200,18 @@ public class AgentBehaviour : MonoBehaviour
             timeAlive++;
             //net.AddFitness(0.01f);
         }
-        info = new float[vision.objectMax*5+4];
+        info = new float[vision.objectMax*3+4];
         for(int i = 0; i < vision.objectMax; i++)
         {
-            int index = i * 5;
+            int index = i * 3;
             info[index] = vision.Distances[i];
-            info[index + 1] = vision.isHeads[i];
-            info[index + 2] = vision.isWalls[i];
-            info[index + 3] = vision.angles[i];
-            info[index + 4] = vision.isBodys[i];
+            info[index + 1] = vision.types[i];
+            info[index + 2] = vision.angles[i];
         }
-        info[vision.objectMax*5] = health;
-        info[vision.objectMax*5 + 1] = movement.stamina;
-        info[vision.objectMax*5 + 2] = movement.forwardvel;
-        info[vision.objectMax*5 + 3] = movement.sidevel;
+        info[vision.objectMax*3] = health;
+        info[vision.objectMax*3 + 1] = movement.stamina;
+        info[vision.objectMax*3 + 2] = movement.forwardvel;
+        info[vision.objectMax*3 + 3] = movement.sidevel;
 
         if (Mathf.Abs(transform.position.y) > 5f)
         {

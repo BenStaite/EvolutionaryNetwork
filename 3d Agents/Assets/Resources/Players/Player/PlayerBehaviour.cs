@@ -58,20 +58,6 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    public void Update()
-    {
-        info = new float[vision.objectMax * 5];
-        for (int i = 0; i < vision.objectMax; i++)
-        {
-            int index = i * 5;
-            info[index] = vision.Distances[i];
-            info[index + 1] = vision.angles[i];
-            info[index + 2] = vision.isWalls[i];
-            info[index + 3] = vision.isHeads[i];
-            info[index + 4] = vision.isBodys[i];
-        }
-    }
-
     public void Kill()
     {
         Destroy(gameObject,5f);

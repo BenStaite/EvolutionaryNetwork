@@ -8,6 +8,7 @@ public class NetHandler : MonoBehaviour
     public GameObject AgentObject;
     public int netnum;
     public int agentnum;
+    public bool KillOnTouch;
     public List<NeuralNetwork> nets;
     private List<AgentBehaviour> agents;
     public int populationSize;
@@ -17,12 +18,13 @@ public class NetHandler : MonoBehaviour
     public Color[] colors;
     public int gens;
     public float mutationMod = 100f;
-    private int[] layers = new int[] {19,10,5,2}; //9 input and 3 output
+    private int[] layers = new int[] {13,10,5,2}; //9 input and 3 output
     public float averageFitness;
     public int limit = 4;
     public int resetNum = 6;
     public bool savebest = false;
     public float killScale = 0.5f;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -213,7 +215,6 @@ public class NetHandler : MonoBehaviour
                 a.Kill();
             }
             gens++;
-
             nets.Sort();
             float totalFitness = 0;
             foreach (NeuralNetwork net in nets)
@@ -224,23 +225,12 @@ public class NetHandler : MonoBehaviour
                 colors[index] = net.color;
                 kills[index] = net.kills;
             }
-
-
-
             if (savebest)
             {
                 saveBest();
             }
-               
-
             averageFitness = totalFitness / populationSize;
             ReplenishAgents();
-           /* if (!nets[populationSize - 1].hasBeenBest)
-            {
-                nets[populationSize - 1].color = new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f));
-                nets[populationSize - 1].hasBeenBest = true;
-            }
-            */
         }
     }
 }
