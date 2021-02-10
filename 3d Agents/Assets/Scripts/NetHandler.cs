@@ -18,12 +18,13 @@ public class NetHandler : MonoBehaviour
     public Color[] colors;
     public int gens;
     public float mutationMod = 100f;
-    private int[] layers = new int[] {13,10,5,2}; //9 input and 3 output
+    private int[] layers = new int[] {19,25,10,2}; //9 input and 3 output
     public float averageFitness;
     public int limit = 4;
     public int resetNum = 6;
     public bool savebest = false;
     public float killScale = 0.5f;
+    public int trainNum = 3;
     
     // Start is called before the first frame update
     void Start()
@@ -54,14 +55,16 @@ public class NetHandler : MonoBehaviour
                 {
                     breedrand = Random.Range(0, limit);
                 }
-                nets[i + (j*limit)] = new NeuralNetwork(nets[(populationSize - 1) - i], false);
-                //nets[i + (j * limit)] = new NeuralNetwork(nets[(populationSize - 1) - i], nets[populationSize-1 - breedrand]);
+                //nets[i + (j*limit)] = new NeuralNetwork(nets[(populationSize - 1) - i], false);
+                nets[i + (j * limit)] = new NeuralNetwork(nets[(populationSize - 1) - i], nets[populationSize-1 - breedrand]);
                 nets[i + (j*limit)].Mutate(mutationMod);
             }
         }
 
         nets[0] = new NeuralNetwork(layers);
         nets[0].color = Color.white;
+        nets[1] = new NeuralNetwork(layers);
+        nets[1].color = Color.black;
 
         foreach (NeuralNetwork net in nets)
         {
@@ -198,39 +201,58 @@ public class NetHandler : MonoBehaviour
         netnum = nets.Count;
         agentnum = agents.Count;
 
-
         if (agents.Count < resetNum)
         {
-            Replenishing = true;
-            foreach (NeuralNetwork n in nets)
+            if (gens % trainNum == 0 && gens != 0)
             {
-                n.AddFitness(n.kills*killScale);
-                //n.AddFitness(n.damage);
-                
-                //a.net.AddFitness(2f);
+                Replenishing = true;
+                foreach (AgentBehaviour a in agents)
+                {
+                    a.Kill();
+                }
+                foreach (NeuralNetwork n in nets)
+                {
+                    n.AddFitness(n.kills * killScale);
+                    n.AddFitness(n.distance / 100f);
+                    n.AddFitness(n.timeAlive / 1000f);
+                }
+                nets.Sort();
+                float totalFitness = 0;
+                foreach (NeuralNetwork net in nets)
+                {
+                    int index = nets.IndexOf(net);
+                    fitness[index] = net.GetFitness();
+                    totalFitness += fitness[index];
+                    colors[index] = net.color;
+                    kills[index] = net.kills;
+                }
+                if (savebest)
+                {
+                    saveBest();
+                }
+                averageFitness = totalFitness / populationSize;
+                ReplenishAgents();
             }
-            foreach (AgentBehaviour a in agents)
+            else
             {
-                //a.net.AddFitness(a.timeAlive/10f);
-                a.Kill();
+                foreach (AgentBehaviour a in agents)
+                {
+                    a.Kill();
+                }
+                nets.Sort();
+                float totalFitness = 0;
+                foreach (NeuralNetwork n in nets)
+                {
+                    int index = nets.IndexOf(n);
+                    fitness[index] = n.GetFitness();
+                    totalFitness += fitness[index];
+                    colors[index] = n.color;
+                    kills[index] = n.kills;
+                    averageFitness = (totalFitness / populationSize);
+                    AddAgent(n);
+                }
             }
             gens++;
-            nets.Sort();
-            float totalFitness = 0;
-            foreach (NeuralNetwork net in nets)
-            {
-                int index = nets.IndexOf(net);
-                fitness[index] = net.GetFitness();
-                totalFitness += fitness[index];
-                colors[index] = net.color;
-                kills[index] = net.kills;
-            }
-            if (savebest)
-            {
-                saveBest();
-            }
-            averageFitness = totalFitness / populationSize;
-            ReplenishAgents();
         }
     }
 }

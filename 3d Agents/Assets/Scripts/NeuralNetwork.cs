@@ -17,6 +17,8 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     public int kills;
     public float damage;
     public float damageTaken;
+    public float distance;
+    public float timeAlive;
 
 
 

@@ -11,7 +11,9 @@ public class EfficientVision : MonoBehaviour
     private float Timer;
 
     public float[] Distances;
-    public float[] types;
+    public float[] isheads;
+    public float[] isbodys;
+    public float[] iswalls;
     public float[] angles;
     public float visionangle = 0.51f;
     
@@ -51,7 +53,9 @@ public class EfficientVision : MonoBehaviour
     {
         Timer = 0;
         Distances = new float[objectMax];
-        types = new float[objectMax];
+        isheads = new float[objectMax];
+        isbodys = new float[objectMax];
+        iswalls = new float[objectMax];
         angles = new float[objectMax];
 
     }
@@ -141,7 +145,9 @@ public class EfficientVision : MonoBehaviour
                 distances[i] = -1f;
                 Distances[i] = 0;
                 angles[i] = 0;
-                types[i] = 0;
+                isheads[i] = 0;
+                isbodys[i] = 0;
+                iswalls[i] = 0;
             }
 
             DetectedObject[] objects = new DetectedObject[colliders.Length];
@@ -197,19 +203,19 @@ public class EfficientVision : MonoBehaviour
                     if (obj.collider.tag == "Head")
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.blue, 0.1f);
-                        types[i] = -1;
+                        isheads[i] = 1;
                         //  Debug.Log(" ", col);
                     }
                     else if (obj.collider.tag == "Body")
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.blue, 0.1f);
-                        types[i] = 1;
+                        isbodys[i] = 1;
                         // Debug.Log(" ", col);
                     }
-                    else
+                    else if (obj.collider.tag == "Wall")
                     {
                         Debug.DrawLine(transform.position, obj.ClosestPoint, Color.green, 0.1f);
-                        types[i] = 0;
+                        iswalls[i] = 1;
                         //Debug.Log(" ", col);
                     }
                 }

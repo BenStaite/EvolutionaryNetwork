@@ -94,7 +94,7 @@ public class Movement : MonoBehaviour
             rotationaccel = rotationaccel * 0.8f;
         }
 
-        rotationaccel = Mathf.Clamp(rotationaccel, -2f, 2f);
+        rotationaccel = Mathf.Clamp(rotationaccel, -1.5f, 1.5f);
         rotation += rotationaccel;
         transform.rotation = Quaternion.Euler(0f, rotation, 0f);
         move = transform.forward * z * speed;
